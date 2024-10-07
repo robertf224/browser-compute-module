@@ -10,17 +10,27 @@ async function main(): Promise<void> {
     const computeModule = new ComputeModule({
         logger: console,
         definitions: {
-          getWebpage: {
-              input: Type.Object({
-                  url: Type.String({ format: "uri" }),
-              }),
-              output:  Type.String(),
-          }
+            greeting: {
+                input: Type.Object({
+                    name: Type.String(),
+                }),
+                output: Type.String(),
+            },
+            getWebpage: {
+                input: Type.Object({
+                    url: Type.String({ format: "uri" }),
+                }),
+                output: Type.String(),
+            }
         },
       });
 
     computeModule.on("responsive", () => {
         console.log("Module is responsive...");
+    });
+
+    computeModule.register("greeting", async ({ name }) => { 
+        return `Hello, ${name}!`;
     })
 
     computeModule.register("getWebpage", async ({ url }) => {
