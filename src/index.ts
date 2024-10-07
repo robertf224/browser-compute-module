@@ -3,19 +3,12 @@ import { ComputeModule } from "@palantir/compute-module";
 import { Type } from "@sinclair/typebox";
 
 async function main(): Promise<void> {
-    console.log("Starting module...");
-
     let cachedBrowser: Promise<Browser> | undefined;
 
     const computeModule = new ComputeModule({
         logger: console,
+        isAutoRegistered: false,
         definitions: {
-            greeting: {
-                input: Type.Object({
-                    name: Type.String(),
-                }),
-                output: Type.String(),
-            },
             getWebpage: {
                 input: Type.Object({
                     url: Type.String({ format: "uri" }),
@@ -23,15 +16,7 @@ async function main(): Promise<void> {
                 output: Type.String(),
             }
         },
-      });
-
-    computeModule.on("responsive", () => {
-        console.log("Module is responsive...");
     });
-
-    computeModule.register("greeting", async ({ name }) => { 
-        return `Hello, ${name}!`;
-    })
 
     computeModule.register("getWebpage", async ({ url }) => {
         let context: BrowserContext | undefined;
@@ -43,8 +28,12 @@ async function main(): Promise<void> {
 
             context = await browser.createBrowserContext();
             const page = await context.newPage();
-            await page.goto(url, { waitUntil: "networkidle2"});
-            return page.content();
+            await page.goto(url, { waitUntil: "domcontentloaded"});
+            const content = await page.content();
+            return content;
+        } catch (error) {
+            console.error(error);
+            throw new Error("Error fetching webpage");
         } finally {
             await context?.close();
         }

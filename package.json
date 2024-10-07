@@ -2,14 +2,13 @@
     "name": "@bobbyfidz/browser-compute-module",
     "version": "1.0.0",
     "scripts": {
-      "build": "esbuild ./src/index.ts --bundle --platform=node --outfile=./dist/index.js",
+      "build": "tsc",
       "start": "node ./dist/index.js"
     },
     "dependencies": {
       "@palantir/compute-module": "^0.2.1",
       "@sinclair/typebox": "^0.32.35",
-      "puppeteer": "23.5.1",
-      "esbuild": "^0.23.0"
+      "puppeteer": "23.5.1"
     },
     "devDependencies": {
       "@types/node": "^22.5.4",
