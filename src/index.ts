@@ -3,6 +3,8 @@ import { ComputeModule } from "@palantir/compute-module";
 import { Type } from "@sinclair/typebox";
 
 async function main(): Promise<void> {
+    console.log("Starting module...");
+
     const browser = await puppeteer.launch();
 
     const computeModule = new ComputeModule({
@@ -16,6 +18,10 @@ async function main(): Promise<void> {
           }
         },
       });
+
+    computeModule.on("responsive", () => {
+        console.log("Module is responsive...");
+    })
 
     computeModule.register("getWebpage", async ({ url }) => {
         let context: BrowserContext | undefined;
