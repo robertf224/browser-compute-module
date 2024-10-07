@@ -1,11 +1,11 @@
-import puppeteer, { BrowserContext } from "puppeteer";
+import puppeteer, { Browser, BrowserContext } from "puppeteer";
 import { ComputeModule } from "@palantir/compute-module";
 import { Type } from "@sinclair/typebox";
 
 async function main(): Promise<void> {
     console.log("Starting module...");
 
-    const browser = await puppeteer.launch();
+    let cachedBrowser: Promise<Browser> | undefined;
 
     const computeModule = new ComputeModule({
         logger: console,
@@ -26,6 +26,11 @@ async function main(): Promise<void> {
     computeModule.register("getWebpage", async ({ url }) => {
         let context: BrowserContext | undefined;
         try {
+            if (!cachedBrowser) {
+                cachedBrowser = puppeteer.launch();
+            }
+            const browser = await cachedBrowser;
+
             context = await browser.createBrowserContext();
             const page = await context.newPage();
             await page.goto(url, { waitUntil: "networkidle2"});
