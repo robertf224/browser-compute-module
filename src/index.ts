@@ -12,6 +12,12 @@ async function main(): Promise<void> {
                     url: Type.String({ format: "uri" }),
                 }),
                 output: Type.String(),
+            },
+            hello: {
+                input: Type.Object({
+                    name: Type.String(),
+                }),
+                output: Type.String(),
             }
         },
     });
@@ -34,11 +40,17 @@ async function main(): Promise<void> {
             return content;
         } catch (error) {
             console.error(error);
-            throw new Error("Error fetching webpage");
+            return "";
         } finally {
             await context?.close();
         }
     });
+
+    computeModule.register("hello", async ({ name }) => {
+        return `Hello, ${name}!`;
+    })
+
+
 }
 
 main().catch(error => {
