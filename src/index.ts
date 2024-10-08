@@ -30,6 +30,7 @@ async function main(): Promise<void> {
             const page = await context.newPage();
             await page.goto(url, { waitUntil: "domcontentloaded", timeout: 10_000 });
             const content = await page.content();
+            console.log(`Successfully fetched content from ${url}`);
             return content;
         } catch (error) {
             console.error(error);
